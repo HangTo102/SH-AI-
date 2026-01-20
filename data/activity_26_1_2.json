@@ -1,0 +1,32 @@
+{
+    "id" : "national_expo_2024",
+    "name": "国际科技创新博览会",
+    "date": "2024年9月10日-9月12日",
+    "time": "09:00-17:00",
+    "location": "上海国家会展中心",
+    "address": "上海市青浦区崧泽大道333号",
+    "description": "展示最新科技创新成果，涵盖人工智能、物联网、新能源等领域。",
+    "exhibitors": [
+        {"company": "华为", "booth": "A101", "focus": "5G通信"},
+        {"company": "阿里巴巴", "booth": "B205", "focus": "云计算"},
+        {"company": "腾讯", "booth": "C308", "focus": "人工智能"},
+        {"company": "字节跳动", "booth": "D412", "focus": "大数据"}
+    ],
+    "ticket_info": {
+        "professional": "专业观众票 200元/天",
+        "public": "公众开放票 80元/天",
+        "group": "团体票（10人以上）8折",
+        "registration_url": "https://expo.example.com/register"
+    },
+    "sessions": [
+        {"topic": "AI未来趋势", "speaker": "李开复", "time": "9月10日 10:00"},
+        {"topic": "量子计算进展", "speaker": "潘建伟", "time": "9月11日 14:00"},
+        {"topic": "新能源技术", "speaker": "马斯克", "time": "9月12日 11:00"}
+    ],
+    "facilities": ["会议厅", "展览区", "洽谈区", "餐厅", "停车场"],
+    "contact": {
+        "phone": "400-987-6543",
+        "email": "info@techexpo.com",
+        "website": "www.techexpo2024.com"
+    }
+}

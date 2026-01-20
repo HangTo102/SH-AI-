@@ -1,0 +1,30 @@
+{
+    "id": "music_festival_2024",
+    "name": "2024夏日音乐节",
+    "aliases": ["夏日音乐节", "音乐节"],
+    "date": "2024年8月15日-8月17日",
+    "time": "每天14:00-22:00",
+    "location": "北京朝阳公园",
+    "address": "北京市朝阳区朝阳公园南路1号",
+    "description": "一年一度的夏日音乐盛典，汇聚国内外知名音乐人和乐队。",
+    "lineup": [
+        {"artist": "朴树", "time": "8月15日 19:00", "stage": "主舞台"},
+        {"artist": "新裤子乐队", "time": "8月16日 20:30", "stage": "主舞台"},
+        {"artist": "李荣浩", "time": "8月17日 21:00", "stage": "主舞台"},
+        {"artist": "周深", "time": "8月15日 17:00", "stage": "副舞台"},
+        {"artist": "邓紫棋", "time": "8月16日 18:30", "stage": "副舞台"}
+    ],
+    "ticket_info": {
+        "single_day": "普通票 380元，VIP票 680元",
+        "three_day_pass": "通票 980元",
+        "purchase_url": "https://ticket.example.com/music-festival",
+        "student_discount": ["学生票 8折优惠","未成年（有成人陪同） 享3折优惠"]
+    },
+    "facilities": ["餐饮区", "休息区", "医疗点", "存包处", "充电宝租赁"],
+    "rules": ["禁止携带外来食品饮料", "18岁以下需家长陪同", "禁止专业摄像设备", "禁止吸烟"],
+    "contact": {
+        "phone": "400-123-4567",
+        "email": "support@musicfestival.com"
+    }
+}
+

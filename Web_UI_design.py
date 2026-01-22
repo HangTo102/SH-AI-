@@ -1,11 +1,10 @@
 # 基于 streamlit 的 web_UI 开发
 import streamlit as st
-
 from core_layer.retriever import (retrieve_activity_candidates,select_activity)
 from core_layer.extractor import extract_blocks
 from core_layer.responder import render_response
 from core_layer.loader import load_all_activities
-
+from core_layer.commit import upload_activity_page
 
 # =========================
 # 初始化
@@ -16,13 +15,24 @@ st.set_page_config(
     layout="centered"
 )
 
+# 侧边栏设计
+st.sidebar.title("管理入口")
+mode = st.sidebar.selectbox(
+    "选择功能",
+    ["用户查询", "主办方上传"]
+)
+
 st.title("🎫 活动信息智能助手")
 st.caption("支持查询活动时间、地点、票务、参展信息、导航方式等")
-
 
 # =========================
 # Session State
 # =========================
+if mode == "主办方上传":
+    upload_activity_page()
+    st.session_state.activities = load_all_activities()
+    st.stop()   # ⬅ 非常重要，防止下面的查询逻辑执行
+
 if "activities" not in st.session_state:
     st.session_state.activities = load_all_activities()
 
@@ -88,3 +98,4 @@ for item in st.session_state.chat_history:
 # =========================
 if st.session_state.current_activity:
     st.info(f"📌 当前活动：{st.session_state.current_activity.get('name')}")
+

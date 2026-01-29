@@ -1,0 +1,42 @@
+# core_layer/ai_client.py
+import os
+from dashscope import Generation
+
+
+MODEL_NAME = "qwen-plus"
+
+
+def ai_generate_answer(known_info: dict, question: str) -> str:
+    """
+    使用大模型基于「已知信息」生成自然语言回答
+    """
+    api_key = os.getenv("DASHSCOPE_API_KEY")
+    if not api_key:
+        return "⚠️ AI 服务未配置（缺少 API Key）"
+
+    prompt = f"""
+你是一个活动信息智能助手。
+你只能基于【已知信息】回答问题，不能编造不存在的内容。
+
+【已知信息】
+{known_info}
+
+【用户问题】
+{question}
+
+如果已知信息中没有答案，请明确说明“暂无相关信息”。
+"""
+
+    try:
+        response = Generation.call(
+            model=MODEL_NAME,
+            prompt=prompt,
+            temperature=0.3,
+            max_tokens=500
+        )
+
+        return response.output.text.strip()
+
+    except Exception as e:
+        # 非常重要：AI 挂了，系统不能挂
+        return f"⚠️ AI 服务暂时不可用（{str(e)}）"

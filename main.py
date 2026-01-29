@@ -1,9 +1,11 @@
 from core_layer.loader import load_all_activities
 from core_layer.retriever import retrieve_activity_candidates
 from core_layer.extractor import extract_blocks
-from core_layer.responder import render_block
 from core_layer.responder import render_response
 from core_layer.retriever import select_activity
+from SH_AI.prompt_layer.ai_client import ai_generate_answer
+from config import USE_AI
+
 
 current_activity = None
 def answer_question(question: str, activities: list[dict], current_activity: dict | None):
@@ -20,8 +22,13 @@ def answer_question(question: str, activities: list[dict], current_activity: dic
 
     extracted = extract_blocks(activity, question)
 
-    if not extracted:
-        return activity, "暂无该活动的相关信息"
+    if extracted:
+        if USE_AI:
+            answer = ai_generate_answer(extracted, question)
+        else:
+            answer = render_response(extracted)
+    else:
+        answer = "暂无相关信息"
 
     text = render_response(extracted)
     return activity, text

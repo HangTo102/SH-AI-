@@ -10,7 +10,8 @@ def ai_generate_answer(known_info: dict, question: str) -> str:
     """
     使用大模型基于「已知信息」生成自然语言回答
     """
-    api_key = os.getenv("DASHSCOPE_API_KEY")
+    # api_key = os.getenv("DASHSCOPE_API_KEY")   # 该关键词只适用于本地部署运行
+    api_key = st.secrets.get("DASHSCOPE_API_KEY", None)    # 该关键词用于 streamlit 平台
     if not api_key:
         return "⚠️ AI 服务未配置（缺少 API Key）"
 
@@ -41,4 +42,5 @@ def ai_generate_answer(known_info: dict, question: str) -> str:
     except Exception as e:
         # 非常重要：AI 挂了，系统不能挂
         return f"⚠️ AI 服务暂时不可用（{str(e)}）"
+
 

@@ -47,7 +47,7 @@ def main():
     current_activity = None
 
     while True:
-        question = input("\n你：").strip()
+        question = input("你：").strip()
         if question.lower() == "exit":
             break
 
@@ -57,8 +57,9 @@ def main():
             current_activity
         )
 
-        print("助手：", answer)
+        print("\n助手：", answer)
 
 
 if __name__ == "__main__":
     main()
+

@@ -24,13 +24,17 @@ def answer_question(question: str, activities: list[dict], current_activity: dic
 
     if extracted:
         if USE_AI:
-            answer = ai_generate_answer(extracted, question)
+            try:
+                text = ai_generate_answer(extracted, question)
+            except Exception as e:
+                print(f"AI调用失败: {e}")
+                text = render_response(extracted)  # 回退到非AI模式
         else:
-            answer = render_response(extracted)
+            text = render_response(extracted)
     else:
-        answer = "暂无相关信息"
+        text = "暂无相关信息"
 
-    text = render_response(extracted)
+    # text = render_response(extracted)
     return activity, text
 
 

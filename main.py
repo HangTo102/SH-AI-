@@ -6,9 +6,6 @@ from core_layer.retriever import select_activity
 from SH_AI.prompt_layer.ai_client import ai_generate_answer
 from config import USE_AI
 
-import streamlit as st
-api_key = st.secrets["DASHSCOPE_API_KEY"]
-st.write(st.secrets.get("DASHSCOPE_API_KEY", "没读到"))
 
 current_activity = None
 def answer_question(question: str, activities: list[dict], current_activity: dict | None):
@@ -65,5 +62,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 

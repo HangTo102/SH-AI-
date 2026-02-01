@@ -17,6 +17,7 @@ def ai_generate_answer(known_info: dict, question: str) -> str:
     prompt = f"""
 你是一个活动信息智能助手。
 你只能基于【已知信息】回答问题，不能编造不存在的内容。
+请根据用户问题将【已知信息】用更自然、更口语化的语气回答。
 
 【已知信息】
 {known_info}
@@ -40,3 +41,4 @@ def ai_generate_answer(known_info: dict, question: str) -> str:
     except Exception as e:
         # 非常重要：AI 挂了，系统不能挂
         return f"⚠️ AI 服务暂时不可用（{str(e)}）"
+

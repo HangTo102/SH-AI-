@@ -6,7 +6,7 @@ from core_layer.loader import load_all_activities
 import streamlit as st
 from config import USE_AI  # 保持原导入
 from prompt_layer.ai_client import ai_generate_answer  # 确保导入 AI 函数
-from utils import show_error  # 导入错误显示函数
+from prompt_layer.utils import show_error  # 导入错误显示函数
 
 
 # 初始化
@@ -110,3 +110,4 @@ for item in st.session_state.chat_history:
 # =========================
 if st.session_state.current_activity:
     st.info(f"📌 当前活动：{st.session_state.current_activity.get('name')}")
+

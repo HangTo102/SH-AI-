@@ -1,36 +1,13 @@
-# 基于 streamlit 的 web_UI 开发
-import streamlit as st
-from core_layer.retriever import (retrieve_activity_candidates,select_activity)
+# 基于 .streamlit 的 web_UI 开发
+from core_layer.retriever import retrieve_activity_candidates, select_activity
 from core_layer.extractor import extract_blocks
 from core_layer.responder import render_response
 from core_layer.loader import load_all_activities
-from core_layer.commit import upload_activity_page
-# 仅作调试使用
-# import streamlit as st
-# import os
+import streamlit as st
+from config import USE_AI  # 保持原导入
+from prompt_layer.ai_client import ai_generate_answer  # 确保导入 AI 函数
+from utils import show_error  # 导入错误显示函数
 
-# st.subheader("调试信息 - 请查看这个输出告诉我结果（上线删掉）")
-
-# # 检查 USE_AI
-# use_ai_from_env = os.getenv("USE_AI", "false").lower() == "true"
-# use_ai_from_secrets = st.secrets.get("USE_AI", "false").lower() == "true"
-
-# st.write("os.getenv('USE_AI') →", os.getenv("USE_AI", "没读到"))
-# st.write("st.secrets.get('USE_AI') →", st.secrets.get("USE_AI", "没读到"))
-# st.write("USE_AI 判断 (os.getenv) →", use_ai_from_env)
-# st.write("USE_AI 判断 (st.secrets) →", use_ai_from_secrets)
-
-# # 检查 API key
-# try:
-#     key = st.secrets["DASHSCOPE_API_KEY"]  # 改成你的实际 key 名
-#     st.success(f"API key 已读取 (st.secrets)，长度: {len(key)}")
-# except Exception as e:
-#     st.error(f"API key 读取失败: {str(e)}")
-
-# # 如果你有 LLM 调用函数，在调用前加：
-# if not use_ai_from_secrets:  # 或用你实际判断的变量
-#     st.warning("USE_AI 为 False，跳过 AI 调用 → 只显示检索原文")
-# 仅作临时调试使用
 
 # =========================
 # 初始化
@@ -54,11 +31,6 @@ st.caption("支持查询活动时间、地点、票务、参展信息、导航�
 # =========================
 # Session State
 # =========================
-if mode == "主办方上传":
-    upload_activity_page()
-    st.session_state.activities = load_all_activities()
-    st.stop()   # ⬅ 非常重要，防止下面的查询逻辑执行
-
 if "activities" not in st.session_state:
     st.session_state.activities = load_all_activities()
 
@@ -67,7 +39,6 @@ if "current_activity" not in st.session_state:
 
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
-
 
 # =========================
 # 输入框
@@ -79,17 +50,19 @@ question = st.text_input(
 
 ask = st.button("提问")
 
-
 # =========================
-# 主逻辑
+# 主逻辑（这里是关键改动：添加 AI 润色逻辑，与 main.py 同步）
 # =========================
 if ask and question.strip():
 
     activities = st.session_state.activities
     current_activity = st.session_state.current_activity
 
-    # ① 如果当前没有活动，先检索活动
+    # st.info("调试：开始处理问题...")  # 加调试：确认进入主逻辑
+
+    # ① 如果当前没有活动，先检索活动（保持原样）
     if current_activity is None:
+        st.write("调试：当前无活动，正在检索 candidates...")
         candidates = retrieve_activity_candidates(activities, question)
         selected = select_activity(candidates, len(activities))
 
@@ -98,33 +71,51 @@ if ask and question.strip():
         else:
             current_activity = selected
             st.session_state.current_activity = selected
+            # st.write("调试：检索到活动：" + selected.get('name', '未知'))  # 加调试
 
-    # ② 已经有活动 → 抽取 + 回答
+    # ② 已经有活动 → 抽取 + 回答（改动点：添加 AI 判断和调用）
     if current_activity:
+        # st.write("调试：当前活动存在，正在提取 blocks...")
         extracted = extract_blocks(current_activity, question)
-        answer = render_response(extracted)
+        st.write("调试：extracted 是否有内容？", bool(extracted))  # 加调试
 
-    # ③ 记录对话
+        if extracted:
+            # st.write("调试：USE_AI 值（进入分支前）：", USE_AI)  # 加调试
+
+            if USE_AI:
+                st.info("已进入 AI 润色分支，正在调用 DashScope...")  # 加调试 + 用户提示
+                try:
+                    text = ai_generate_answer(extracted, question)  # 调用 AI 函数
+                    # st.success("调试：AI 调用成功，返回内容长度：" + str(len(text)))  # 加调试
+                except Exception as e:
+                    error_msg = show_error(f"AI 调用异常：{str(e)}", e)  # 用兼容函数显示错误
+                    text = render_response(extracted)  # fallback 原文
+                    st.warning("调试：AI 调用失败，已 fallback 到原文")
+            else:
+                st.warning("USE_AI 为 False，跳过 AI，直接用 render_response")  # 加调试
+                text = render_response(extracted)
+        else:
+            st.warning("extracted 为空，没有可用的块信息")  # 加调试
+            text = "暂无相关信息"
+
+        answer = text  # 最终输出
+
+    # ③ 记录对话（保持原样）
     st.session_state.chat_history.append(
         {"question": question, "answer": answer}
     )
 
-
 # =========================
-# 对话展示
+# 对话展示（保持原样）
 # =========================
 for item in st.session_state.chat_history:
     st.markdown(f"**你：** {item['question']}")
     st.markdown(f"**助手：** {item['answer']}")
     st.markdown("---")
 
-
 # =========================
-# 当前活动提示
+# 当前活动提示（保持原样）
 # =========================
 if st.session_state.current_activity:
     st.info(f"📌 当前活动：{st.session_state.current_activity.get('name')}")
-
-
-
 

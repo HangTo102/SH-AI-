@@ -22,7 +22,7 @@ st.write("USE_AI 判断 (st.secrets) →", use_ai_from_secrets)
 
 # 检查 API key
 try:
-    key = st.secrets["LLM_API_KEY"]  # 改成你的实际 key 名
+    key = st.secrets["DASHSCOPE_API_KEY"]  # 改成你的实际 key 名
     st.success(f"API key 已读取 (st.secrets)，长度: {len(key)}")
 except Exception as e:
     st.error(f"API key 读取失败: {str(e)}")
@@ -124,5 +124,6 @@ for item in st.session_state.chat_history:
 # =========================
 if st.session_state.current_activity:
     st.info(f"📌 当前活动：{st.session_state.current_activity.get('name')}")
+
 
 

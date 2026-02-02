@@ -6,30 +6,30 @@ from core_layer.responder import render_response
 from core_layer.loader import load_all_activities
 from core_layer.commit import upload_activity_page
 # 仅作调试使用
-import streamlit as st
-import os
+# import streamlit as st
+# import os
 
-st.subheader("调试信息 - 请查看这个输出告诉我结果（上线删掉）")
+# st.subheader("调试信息 - 请查看这个输出告诉我结果（上线删掉）")
 
-# 检查 USE_AI
-use_ai_from_env = os.getenv("USE_AI", "false").lower() == "true"
-use_ai_from_secrets = st.secrets.get("USE_AI", "false").lower() == "true"
+# # 检查 USE_AI
+# use_ai_from_env = os.getenv("USE_AI", "false").lower() == "true"
+# use_ai_from_secrets = st.secrets.get("USE_AI", "false").lower() == "true"
 
-st.write("os.getenv('USE_AI') →", os.getenv("USE_AI", "没读到"))
-st.write("st.secrets.get('USE_AI') →", st.secrets.get("USE_AI", "没读到"))
-st.write("USE_AI 判断 (os.getenv) →", use_ai_from_env)
-st.write("USE_AI 判断 (st.secrets) →", use_ai_from_secrets)
+# st.write("os.getenv('USE_AI') →", os.getenv("USE_AI", "没读到"))
+# st.write("st.secrets.get('USE_AI') →", st.secrets.get("USE_AI", "没读到"))
+# st.write("USE_AI 判断 (os.getenv) →", use_ai_from_env)
+# st.write("USE_AI 判断 (st.secrets) →", use_ai_from_secrets)
 
-# 检查 API key
-try:
-    key = st.secrets["DASHSCOPE_API_KEY"]  # 改成你的实际 key 名
-    st.success(f"API key 已读取 (st.secrets)，长度: {len(key)}")
-except Exception as e:
-    st.error(f"API key 读取失败: {str(e)}")
+# # 检查 API key
+# try:
+#     key = st.secrets["DASHSCOPE_API_KEY"]  # 改成你的实际 key 名
+#     st.success(f"API key 已读取 (st.secrets)，长度: {len(key)}")
+# except Exception as e:
+#     st.error(f"API key 读取失败: {str(e)}")
 
-# 如果你有 LLM 调用函数，在调用前加：
-if not use_ai_from_secrets:  # 或用你实际判断的变量
-    st.warning("USE_AI 为 False，跳过 AI 调用 → 只显示检索原文")
+# # 如果你有 LLM 调用函数，在调用前加：
+# if not use_ai_from_secrets:  # 或用你实际判断的变量
+#     st.warning("USE_AI 为 False，跳过 AI 调用 → 只显示检索原文")
 # 仅作临时调试使用
 
 # =========================
@@ -124,6 +124,7 @@ for item in st.session_state.chat_history:
 # =========================
 if st.session_state.current_activity:
     st.info(f"📌 当前活动：{st.session_state.current_activity.get('name')}")
+
 
 
 

@@ -35,6 +35,10 @@ if mode == "主办方上传":
 st.title("🎫 活动信息智能助手")
 st.caption("支持查询活动时间、地点、票务、参展信息、导航方式等")
 
+# 当前活动提示（下方也有提示信息）
+if st.session_state.get("current_activity"):
+    st.info(f"📌 当前活动：{st.session_state.current_activity.get('name')}")
+    
 # Session State
 if "activities" not in st.session_state:
     st.session_state.activities = load_all_activities()
@@ -106,19 +110,16 @@ if ask and question.strip():
         {"question": question, "answer": answer}
     )
 
-# =========================
-# 对话展示（保持原样）
-# =========================
+# 对话展示
 for item in reversed(st.session_state.chat_history):
     st.markdown(f"**你：** {item['question']}")
     st.markdown(f"**助手：** {item['answer']}")
     st.markdown("---")
 
-# =========================
-# 当前活动提示（保持原样）
-# =========================
+# 当前活动提示
 if st.session_state.current_activity:
     st.info(f"📌 当前活动：{st.session_state.current_activity.get('name')}")
+
 
 
 

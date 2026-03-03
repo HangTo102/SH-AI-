@@ -1,5 +1,7 @@
 import json
 import os
+import base64
+import requests
 import streamlit as st
 
 UPLOAD_DIR = "data"
@@ -33,16 +35,18 @@ def upload_activity_page():
             # filename = f"{safe_name}.json"
             # path = os.path.join(UPLOAD_DIR, filename)
 
-            # 保存文件
+            # 写入GitHub仓库
             safe_name = data["name"].replace(" ", "_")
             filename = f"{safe_name}.json"
             file_path = f"data/{filename}"
             content = json.dumps(data, ensure_ascii=False, indent=2)
             content_b64 = base64.b64encode(content.encode("utf-8")).decode("utf-8")
-            
-            # 检查文件是否已存在（更新需要sha）
+
+            GITHUB_TOKEN = st.secrets["GITHUB_TOKEN"]
             api_url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{file_path}"
             headers = {"Authorization": f"token {GITHUB_TOKEN}"}
+            
+            # 检查文件是否已存在（更新时需要sha）
             check = requests.get(api_url, headers=headers)
             sha = check.json().get("sha") if check.status_code == 200 else None
 
@@ -52,12 +56,12 @@ def upload_activity_page():
                 "branch": GITHUB_BRANCH,
             }
             if sha:
-                payload["sha"] = sha  # 更新已有文件必须带sha
+                payload["sha"] = sha
 
             response = requests.put(api_url, headers=headers, json=payload)
 
             if response.status_code in [200, 201]:
-                st.success("✅ 活动信息上传成功！Streamlit 将在约1分钟内自动更新。")
+                st.success("活动信息上传成功！")  # 保持原样
                 if "activities" in st.session_state:
                     del st.session_state["activities"]
             else:
@@ -69,8 +73,9 @@ def upload_activity_page():
             #     json.dump(data, f, ensure_ascii=False, indent=2)
 
             
-            st.success("活动信息上传成功！")
+            # st.success("活动信息上传成功！")
 
         except Exception as e:
             st.error(f"上传失败：{e}")
+
 

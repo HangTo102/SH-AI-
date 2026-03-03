@@ -48,7 +48,9 @@ def upload_activity_page():
             
             # 检查文件是否已存在（更新时需要sha）
             check = requests.get(api_url, headers=headers)
-            sha = check.json().get("sha") if check.status_code == 200 else None
+            check_data = check.json()
+            # 确保拿到的是字符串类型的sha，避免拿到错误数据
+            sha = check_data.get("sha") if check.status_code == 200 and isinstance(check_data, dict) else None
 
             payload = {
                 "message": f"上传活动信息：{data['name']}",
@@ -77,5 +79,6 @@ def upload_activity_page():
 
         except Exception as e:
             st.error(f"上传失败：{e}")
+
 
 

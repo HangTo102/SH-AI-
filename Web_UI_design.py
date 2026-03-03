@@ -109,7 +109,7 @@ if ask and question.strip():
 # =========================
 # 对话展示（保持原样）
 # =========================
-for item in st.session_state.chat_history:
+for item in reversed(st.session_state.chat_history):
     st.markdown(f"**你：** {item['question']}")
     st.markdown(f"**助手：** {item['answer']}")
     st.markdown("---")
@@ -119,5 +119,6 @@ for item in st.session_state.chat_history:
 # =========================
 if st.session_state.current_activity:
     st.info(f"📌 当前活动：{st.session_state.current_activity.get('name')}")
+
 
 

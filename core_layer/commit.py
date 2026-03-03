@@ -12,6 +12,35 @@ GITHUB_BRANCH = "main"
 def upload_activity_page():
     st.header("📤 主办方活动信息上传")
 
+    # 新增：格式说明
+    st.markdown("### 📋 JSON 文件格式要求")
+    st.markdown("请严格按照以下模板格式上传，字段名称不可更改：")
+    st.code("""
+{
+  "name": "活动名称",
+  "date": "2025-08-01",
+  "location": "场馆名称",
+  "address": "详细地址",
+  "description": "活动简介",
+  "tickets": [
+    {"type": "普通票", "price": 100, "remaining": 200}
+  ],
+  "exhibitors": [
+    {"name": "参展商名称", "booth": "展位号", "category": "类别"}
+  ],
+  "navigation": {
+    "subway": "地铁乘坐方式",
+    "bus": "公交乘坐方式",
+    "parking": "停车信息"
+  },
+  "contact": {
+    "phone": "联系电话",
+    "email": "联系邮箱"
+  }
+}
+    """, language="json")
+    st.warning("⚠️ name、date、location、address 为必填字段，其余为选填")
+    
     uploaded_file = st.file_uploader(
         "请上传活动信息 JSON 文件",
         type=["json"]
@@ -79,6 +108,7 @@ def upload_activity_page():
 
         except Exception as e:
             st.error(f"上传失败：{e}")
+
 
 
 

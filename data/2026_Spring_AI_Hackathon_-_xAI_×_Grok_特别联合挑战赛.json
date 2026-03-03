@@ -1,0 +1,57 @@
+{
+  "schema_version": "v1.3",
+  "message_type": "event_notification",
+  "message_id": "EVNT-20260302-0741-89X7",
+  "send_time": "2026-03-02T16:45:00-08:00",
+  "name": "2026 Spring AI Hackathon - xAI × Grok 特别联合挑战赛",
+  "date": "2026-03-28 至 2026-03-29",
+  "location": "Santa Clara Convention Center",
+  "address": "5001 Great America Pkwy, Santa Clara, CA 95054",
+  "event": {
+    "id": "EVT-2026-spring-hackathon",
+    "title": "2026 Spring AI Hackathon",
+    "subtitle": "xAI × Grok 特别联合挑战赛",
+    "organizer": "xAI Community & Santa Clara Tech Hub",
+    "location": {
+      "name": "Santa Clara Convention Center",
+      "address": "5001 Great America Pkwy, Santa Clara, CA 95054",
+      "mode": "offline",
+      "room": "Ballroom A+B"
+    },
+    "time": {
+      "start": "2026-03-28T09:00:00-07:00",
+      "end": "2026-03-29T18:00:00-07:00",
+      "timezone": "America/Los_Angeles"
+    }
+  },
+  "content": {
+    "title": "🚀 最后3周！2026春季AI黑客松等你来战",
+    "body": "...（内容保持不变）...",
+    "highlight_tags": [
+      "Grok4",
+      "AI Agent",
+      "黑客松",
+      "奖金$45k",
+      "xAI官方"
+    ],
+    "action_buttons": [
+      {
+        "text": "立即报名",
+        "type": "primary",
+        "link": "https://hackathon.x.ai/2026spring/register"
+      }
+    ]
+  },
+  "target": {
+    "audience": "all_registered",
+    "priority": "high",
+    "channels": [
+      "push",
+      "email"
+    ],
+    "locale": [
+      "zh-Hans",
+      "en"
+    ]
+  }
+}

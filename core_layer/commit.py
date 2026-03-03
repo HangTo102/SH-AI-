@@ -40,7 +40,44 @@ def upload_activity_page():
 }
     """, language="json")
     st.warning("⚠️ name、date、location、address 为必填字段，其余为选填")
-    
+
+    # 新增：查看和下载现有活动
+    st.markdown("### 📂 查看/修改已有活动信息")
+    GITHUB_TOKEN = st.secrets["GITHUB_TOKEN"]
+    headers = {"Authorization": f"token {GITHUB_TOKEN}"}
+
+    # 获取data目录下所有json文件列表
+    list_url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/data"
+    list_resp = requests.get(list_url, headers=headers, params={"ref": GITHUB_BRANCH})
+
+    if list_resp.status_code == 200:
+        files = [f for f in list_resp.json() if f["name"].endswith(".json")]
+        if files:
+            file_names = [f["name"] for f in files]
+            selected = st.selectbox("选择要修改的活动文件", ["（不修改，直接上传新活动）"] + file_names)
+        
+            if selected != "（不修改，直接上传新活动）":
+                # 获取对应文件内容
+                file_info = next(f for f in files if f["name"] == selected)
+                file_resp = requests.get(file_info["download_url"])
+                file_content = file_resp.text
+            
+                # 提供下载按钮
+                st.download_button(
+                    label=f"⬇️ 下载 {selected}",
+                    data=file_content,
+                    file_name=selected,
+                    mime="application/json"
+                )
+                st.info("请下载文件修改后，在下方重新上传，系统会自动覆盖原文件。")
+        else:
+            st.caption("暂无已上传的活动信息")
+    else:
+        st.caption("暂时无法获取活动列表")
+
+    st.markdown("---")
+    st.markdown("### 📤 上传新活动 / 覆盖已有活动")
+
     uploaded_file = st.file_uploader(
         "请上传活动信息 JSON 文件",
         type=["json"]
@@ -108,6 +145,7 @@ def upload_activity_page():
 
         except Exception as e:
             st.error(f"上传失败：{e}")
+
 
 
 

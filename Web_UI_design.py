@@ -3,6 +3,7 @@ from core_layer.retriever import retrieve_activity_candidates, select_activity
 from core_layer.extractor import extract_blocks
 from core_layer.responder import render_response
 from core_layer.loader import load_all_activities
+from core_layer.commit import upload_activity_page
 import streamlit as st
 from config import USE_AI  # 保持原导入
 from prompt_layer.ai_client import ai_generate_answer  # 确保导入 AI 函数
@@ -23,6 +24,14 @@ mode = st.sidebar.selectbox(
     ["用户查询", "主办方上传"]
 )
 
+# 新增主办方上传页面
+if mode == "主办方上传":
+    upload_activity_page()
+    # 上传成功后清空缓存，让问答页重新加载新文件
+    if "activities" in st.session_state:
+        del st.session_state["activities"]
+    st.stop()
+    
 st.title("🎫 活动信息智能助手")
 st.caption("支持查询活动时间、地点、票务、参展信息、导航方式等")
 
@@ -110,4 +119,5 @@ for item in st.session_state.chat_history:
 # =========================
 if st.session_state.current_activity:
     st.info(f"📌 当前活动：{st.session_state.current_activity.get('name')}")
+
 

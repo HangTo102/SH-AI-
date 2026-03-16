@@ -8,6 +8,7 @@ import streamlit as st
 from config import USE_AI  # 保持原导入
 from prompt_layer.ai_client import ai_generate_answer  # 确保导入 AI 函数
 from prompt_layer.utils import show_error  # 导入错误显示函数
+from navigation_page import navigation_page # 地图导航系统函数
 
 
 # 初始化
@@ -21,10 +22,15 @@ st.set_page_config(
 st.sidebar.title("管理入口")
 mode = st.sidebar.selectbox(
     "选择功能",
-    ["用户查询", "主办方上传"]
+    ["用户查询", "主办方上传", "地图导航"]
 )
 
-# 新增主办方上传页面
+# 地图导航函数调用
+if mode == "会场导航":
+    navigation_page(st.session_state.get("current_activity"))
+    st.stop()
+    
+# 主办方上传页面函数
 if mode == "主办方上传":
     upload_activity_page()
     # 上传成功后清空缓存，让问答页重新加载新文件

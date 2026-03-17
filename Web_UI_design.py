@@ -26,7 +26,7 @@ mode = st.sidebar.selectbox(
 )
 
 # 地图导航函数调用
-if mode == "会场导航":
+if mode == "地图导航":
     navigation_page(st.session_state.get("current_activity"))
     st.stop()
     

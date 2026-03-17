@@ -1,11 +1,48 @@
 import streamlit as st
-import urllib.parse
 import requests
 from streamlit_javascript import st_javascript
 
+def get_route(origin_lng, origin_lat, dest_lng, dest_lat, mode, key):
+    origin = f"{origin_lng},{origin_lat}"
+    destination = f"{dest_lng},{dest_lat}"
+    if mode == "driving":
+        url = "https://restapi.amap.com/v3/direction/driving"
+        params = {"origin": origin, "destination": destination, "key": key}
+    elif mode == "walking":
+        url = "https://restapi.amap.com/v3/direction/walking"
+        params = {"origin": origin, "destination": destination, "key": key}
+    else:
+        url = "https://restapi.amap.com/v3/direction/transit/integrated"
+        params = {"origin": origin, "destination": destination, "key": key, "city": "全国"}
+    return requests.get(url, params=params).json()
+
+def parse_route(route_data, mode):
+    steps, duration, distance = [], 0, 0
+    try:
+        if mode in ["driving", "walking"]:
+            path = route_data["route"]["paths"][0]
+            duration = int(path["duration"]) // 60
+            distance = float(path["distance"]) / 1000
+            for step in path["steps"]:
+                steps.append(step["instruction"])
+        else:
+            transit = route_data["route"]["transits"][0]
+            duration = int(transit["duration"]) // 60
+            distance = float(transit["distance"]) / 1000
+            for segment in transit["segments"]:
+                if "bus" in segment:
+                    for busline in segment["bus"]["buslines"]:
+                        steps.append(f"乘坐 {busline['name']}，从【{busline['departure_stop']['name']}】到【{busline['arrival_stop']['name']}】")
+                elif "walking" in segment:
+                    for s in segment["walking"].get("steps", []):
+                        steps.append(s["instruction"])
+    except:
+        steps = ["路线规划失败，请检查地址是否正确"]
+    return steps, duration, distance
+
 def navigation_page(activity):
     st.header("🗺️ 会场导航")
-    
+
     if not activity:
         st.warning("请先在「用户查询」页面查询活动，再使用导航功能。")
         return
@@ -16,60 +53,71 @@ def navigation_page(activity):
 
     st.info(f"📌 目的地：{name}  |  {address}")
 
-    # 获取用户当前位置（浏览器JS定位）
+    # 获取用户位置
     coords = st_javascript("""
     (async () => {
         if (navigator.geolocation) {
-            return new Promise((resolve, reject) => {
+            return new Promise((resolve) => {
                 navigator.geolocation.getCurrentPosition(
                     pos => resolve({lat: pos.coords.latitude, lng: pos.coords.longitude}),
-                    err => resolve(null)
+                    err => resolve(null),
+                    {timeout: 10000}
                 );
             });
-        } else {
-            return null;
         }
+        return null;
     })()
     """)
 
-    # 地址转坐标（只算一次）
-    geo_url = "https://restapi.amap.com/v3/geocode/geo"
-    geo_resp = requests.get(geo_url, params={"address": address, "key": AMAP_KEY})
-    geo_data = geo_resp.json()
+    # 目的地地址转坐标
+    geo_resp = requests.get("https://restapi.amap.com/v3/geocode/geo", params={
+        "address": address, "key": AMAP_KEY
+    }).json()
 
-    location = None
-    if geo_data.get("status") == "1" and geo_data["geocodes"]:
-        location = geo_data["geocodes"][0]["location"]
-        dest_lng, dest_lat = location.split(",")
+    if not (geo_resp.get("status") == "1" and geo_resp.get("geocodes")):
+        st.error("目的地地址解析失败，请检查活动信息中的地址是否正确。")
+        return
 
-        # 显示静态地图
-        static_map_url = (
-            f"https://restapi.amap.com/v3/staticmap"
-            f"?location={location}&zoom=15&size=750*400"
-            f"&markers=mid,,A:{location}"
-            f"&key={AMAP_KEY}"
-        )
-        st.image(static_map_url, caption=f"📍 {name}", use_container_width=True)
-    else:
-        st.warning("地址解析失败，无法显示地图，但仍可点击下方链接导航")
+    location = geo_resp["geocodes"][0]["location"]
+    dest_lng, dest_lat = location.split(",")
 
-    # 导航跳转链接
+    # 显示目的地静态地图
+    static_map_url = (
+        f"https://restapi.amap.com/v3/staticmap"
+        f"?location={location}&zoom=15&size=750*300"
+        f"&markers=mid,,A:{location}"
+        f"&key={AMAP_KEY}"
+    )
+    st.image(static_map_url, caption=f"📍 {name}", use_container_width=True)
+
+    # 出行方式选择
     nav_mode = st.radio("出行方式", ["🚗 驾车", "🚇 公交", "🚶 步行"], horizontal=True)
     mode_map = {"🚗 驾车": "driving", "🚇 公交": "transit", "🚶 步行": "walking"}
     mode = mode_map[nav_mode]
 
-    # 构建终点
-    if location:
-        to_part = f"{dest_lng},{dest_lat},{urllib.parse.quote(name)}"
-    else:
-        to_part = f"{urllib.parse.quote(address)},{urllib.parse.quote(name)}"
+    if st.button("📍 规划路线"):
+        if coords and isinstance(coords, dict) and "lat" in coords:
+            user_lng = coords["lng"]
+            user_lat = coords["lat"]
 
-    # 构建起点（用户定位）
-    if coords and isinstance(coords, dict) and "lat" in coords and "lng" in coords:
-        from_part = f"{coords['lng']},{coords['lat']},{urllib.parse.quote('我的位置')}"
-        amap_url = f"https://uri.amap.com/navigation?from={from_part}&to={to_part}&mode={mode}&callnative=1"
-    else:
-        amap_url = f"https://uri.amap.com/navigation?to={to_part}&mode={mode}&callnative=1"
+            with st.spinner("正在规划路线..."):
+                route_data = get_route(user_lng, user_lat, dest_lng, dest_lat, mode, AMAP_KEY)
+                steps, duration, distance = parse_route(route_data, mode)
 
-    st.markdown(f"### [📍 点击前往高德地图导航]({amap_url})")
-    st.caption("手机端自动唤起高德地图App，电脑端在浏览器中打开。若定位失败，请刷新页面允许浏览器定位。")
+            st.success(f"🕐 预计用时：{duration} 分钟  |  📏 距离：{distance:.1f} 公里")
+
+            # 显示含路线的静态地图
+            route_map_url = (
+                f"https://restapi.amap.com/v3/staticmap"
+                f"?size=750*400"
+                f"&markers=mid,,起:{user_lng},{user_lat}|mid,,终:{location}"
+                f"&key={AMAP_KEY}"
+            )
+            st.image(route_map_url, caption="路线图", use_container_width=True)
+
+            # 逐步导航指引
+            st.markdown("### 📋 导航步骤")
+            for i, step in enumerate(steps, 1):
+                st.markdown(f"**{i}.** {step}")
+        else:
+            st.warning("未能获取您的当前位置，请允许浏览器定位权限后刷新页面重试。")

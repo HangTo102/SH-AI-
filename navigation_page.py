@@ -54,20 +54,49 @@ def navigation_page(activity):
     st.info(f"📌 目的地：{name}  |  {address}")
 
     # 获取用户位置
-    coords = st_javascript("""
-    (async () => {
-        if (navigator.geolocation) {
-            return new Promise((resolve) => {
-                navigator.geolocation.getCurrentPosition(
-                    pos => resolve({lat: pos.coords.latitude, lng: pos.coords.longitude}),
-                    err => resolve(null),
-                    {timeout: 10000}
-                );
-            });
-        }
-        return null;
-    })()
-    """)
+    st.markdown("### 📍 您的当前位置")
+    location_method = st.radio(
+        "定位方式",
+        ["📱 自动定位（允许浏览器权限）", "✏️ 手动输入地址"],
+        horizontal=True
+    )
+
+    user_lng, user_lat = None, None
+
+    if location_method == "📱 自动定位（允许浏览器权限）":
+        coords = st_javascript("""
+        (async () => {
+            if (navigator.geolocation) {
+                return new Promise((resolve) => {
+                    navigator.geolocation.getCurrentPosition(
+                        pos => resolve({lat: pos.coords.latitude, lng: pos.coords.longitude}),
+                        err => resolve(null),
+                        {timeout: 10000, enableHighAccuracy: true}
+                    );
+                });
+            }
+            return null;
+        })()
+        """)
+        if coords and isinstance(coords, dict) and "lat" in coords:
+            user_lng = coords["lng"]
+            user_lat = coords["lat"]
+            st.success(f"✅ 定位成功：{user_lat:.4f}, {user_lng:.4f}")
+        else:
+            st.warning("自动定位失败，请切换为手动输入地址")
+
+    else:
+        user_address = st.text_input("请输入您的出发地址", placeholder="例如：上海市人民广场")
+        if user_address:
+            user_geo = requests.get("https://restapi.amap.com/v3/geocode/geo", params={
+                "address": user_address, "key": AMAP_KEY
+            }).json()
+            if user_geo.get("status") == "1" and user_geo.get("geocodes"):
+                user_location = user_geo["geocodes"][0]["location"]
+                user_lng, user_lat = user_location.split(",")
+                st.success(f"✅ 出发地已确认：{user_address}")
+            else:
+                st.error("地址解析失败，请重新输入")
 
     # 目的地地址转坐标
     geo_resp = requests.get("https://restapi.amap.com/v3/geocode/geo", params={
@@ -96,7 +125,7 @@ def navigation_page(activity):
     mode = mode_map[nav_mode]
 
     if st.button("📍 规划路线"):
-        if coords and isinstance(coords, dict) and "lat" in coords:
+        if user_lng and user_lat:
             user_lng = coords["lng"]
             user_lat = coords["lat"]
 
@@ -120,4 +149,4 @@ def navigation_page(activity):
             for i, step in enumerate(steps, 1):
                 st.markdown(f"**{i}.** {step}")
         else:
-            st.warning("未能获取您的当前位置，请允许浏览器定位权限后刷新页面重试。")
+            st.warning("请先确认您的出发位置")

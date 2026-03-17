@@ -63,3 +63,4 @@ GitPython~=3.1.46
 dotenv~=0.9.9
 python-dotenv~=1.2.1
 dashscope~=1.25.5
+streamlit-javascript

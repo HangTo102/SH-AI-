@@ -126,9 +126,6 @@ def navigation_page(activity):
 
     if st.button("📍 规划路线"):
         if user_lng and user_lat:
-            user_lng = coords["lng"]
-            user_lat = coords["lat"]
-
             with st.spinner("正在规划路线..."):
                 route_data = get_route(user_lng, user_lat, dest_lng, dest_lat, mode, AMAP_KEY)
                 steps, duration, distance = parse_route(route_data, mode)

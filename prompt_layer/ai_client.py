@@ -2,7 +2,7 @@ import os
 from dashscope import Generation
 import streamlit as st
 
-MODEL_NAME = "qwen-plus"
+MODEL_NAME = "MiniMax-M2.5"
 
 def ai_generate_answer(known_info: dict, question: str) -> str:
     """

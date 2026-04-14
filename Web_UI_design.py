@@ -57,7 +57,7 @@ if "chat_history" not in st.session_state:
 
 # 输入框
 question = st.text_input(
-    "请输入你的问题，例如：国际创新博览会在哪里？",
+    "请输入你的问题，例如：夏日音乐节在哪里？",
     placeholder="例如：怎么去现场？有哪些参展公司？"
 )
 

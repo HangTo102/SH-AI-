@@ -1,11 +1,7 @@
 {
   "id": "ai_hackathon_2026",
   "name": "2026 Spring AI Hackathon",
-  "aliases": [
-    "春季AI黑客松",
-    "xAI Hackathon",
-    "Grok挑战赛"
-  ],
+  "aliases": ["春季AI黑客松", "xAI Hackathon", "Grok挑战赛"],
   "date": "2026年3月28日-3月29日",
   "time": "09:00-18:00",
   "location": "Santa Clara Convention Center",

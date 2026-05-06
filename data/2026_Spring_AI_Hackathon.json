@@ -1,51 +1,58 @@
 {
-    "id": "ai_hackathon_2026",
-    "name": "2026 Spring AI Hackathon",
-    "aliases": ["春季AI黑客松", "xAI Hackathon", "Grok挑战赛"],
-    "date": "2026年3月28日-3月29日",
-    "time": "09:00-18:00",
-    "location": "Santa Clara Convention Center",
-    "address": "5001 Great America Pkwy, Santa Clara, CA 95054",
-    "description": "xAI 社区联合湾区科技中心举办的春季AI黑客松，以“用Grok构建下一代智能体应用”为主题，提供Grok 4 API测试配额、现场工程师答疑和丰厚奖金。",
-    "lineup": [
-      {
-        "artist": "xAI 工程师团队",
-        "time": "3月28日 全天",
-        "stage": "技术指导 & Code Review"
-      },
-      {
-        "artist": "特邀嘉宾演讲",
-        "time": "3月28日 10:00-11:30",
-        "stage": "主会场"
-      },
-      {
-        "artist": "作品展示 & Demo Day",
-        "time": "3月29日 14:00-17:00",
-        "stage": "主会场"
-      }
-    ],
-    "ticket_info": {
-      "single_day": "免费（需提前报名）",
-      "two_day_pass": "免费参会（限量线下名额）",
-      "purchase_url": "https://hackathon.x.ai/2026spring/register",
-      "student_discount": ["学生优先审核通道", "高校AI社团可申请团队加分"]
+  "id": "ai_hackathon_2026",
+  "name": "2026 Spring AI Hackathon",
+  "aliases": [
+    "春季AI黑客松",
+    "xAI Hackathon",
+    "Grok挑战赛"
+  ],
+  "date": "2026年3月28日-3月29日",
+  "time": "09:00-18:00",
+  "location": "Santa Clara Convention Center",
+  "address": "5001 Great America Pkwy, Santa Clara, CA 95054",
+  "description": "xAI 社区联合湾区科技中心举办的春季AI黑客松，以“用Grok构建下一代智能体应用”为主题，提供Grok 4 API测试配额、现场工程师答疑和丰厚奖金。",
+  "lineup": [
+    {
+      "artist": "xAI 工程师团队",
+      "time": "4月28日 全天",
+      "stage": "技术指导 & Code Review"
     },
-    "facilities": [
-      "餐饮区（免费简餐）",
-      "休息区",
-      "电源插座充足",
-      "Wi-Fi覆盖",
-      "打印 & 演示设备支持"
-    ],
-    "rules": [
-      "禁止携带大型专业设备",
-      "需遵守会场防疫要求",
-      "尊重知识产权",
-      "禁止任何形式的骚扰行为",
-      "作品需使用Grok API至少作为核心组件之一"
-    ],
-    "contact": {
-      "phone": "+1 (650) 123-4567",
-      "email": "hackathon@x.ai"
+    {
+      "artist": "特邀嘉宾演讲",
+      "time": "4月28日 10:00-11:30",
+      "stage": "主会场"
+    },
+    {
+      "artist": "作品展示 & Demo Day",
+      "time": "4月29日 14:00-17:00",
+      "stage": "主会场"
     }
+  ],
+  "ticket_info": {
+    "single_day": "免费（需提前报名）",
+    "two_day_pass": "免费参会（限量线下名额）",
+    "purchase_url": "https://hackathon.x.ai/2026spring/register",
+    "student_discount": [
+      "学生优先审核通道",
+      "高校AI社团可申请团队加分"
+    ]
+  },
+  "facilities": [
+    "餐饮区（免费简餐）",
+    "休息区",
+    "电源插座充足",
+    "Wi-Fi覆盖",
+    "打印 & 演示设备支持"
+  ],
+  "rules": [
+    "禁止携带大型专业设备",
+    "需遵守会场防疫要求",
+    "尊重知识产权",
+    "禁止任何形式的骚扰行为",
+    "作品需使用Grok API至少作为核心组件之一"
+  ],
+  "contact": {
+    "phone": "+1 (650) 123-4567",
+    "email": "hackathon@x.ai"
+  }
 }

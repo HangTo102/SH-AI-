@@ -63,58 +63,84 @@ question = st.text_input(
 
 ask = st.button("提问")
 
-# 主逻辑（这里是关键改动：添加 AI 润色逻辑，与 main.py 同步）
+# 主逻辑（修改版：展示多个候选活动让用户选择）
 if ask and question.strip():
 
     activities = st.session_state.activities
     current_activity = st.session_state.current_activity
 
-    # st.info("调试：开始处理问题...")  # 加调试：确认进入主逻辑
-
-    # ① 如果当前没有活动，先检索活动（保持原样）
+    # ① 如果当前没有活动，先检索活动
     if current_activity is None:
-        st.write("调试：当前无活动，正在检索 candidates...")
         candidates = retrieve_activity_candidates(activities, question)
-        selected = select_activity(candidates, len(activities))
-
-        if selected is None:
-            answer = "我找到了多个可能的活动，请你说得更具体一点 😊"
+        
+        if len(candidates) == 0:
+            answer = "没有找到相关活动 😊"
+            st.session_state.chat_history.append(
+                {"question": question, "answer": answer}
+            )
+        elif len(candidates) == 1:
+            # 只有一个候选，直接选
+            current_activity = candidates[0]["activity"]
+            st.session_state.current_activity = current_activity
+            # 继续处理这个活动
         else:
-            current_activity = selected
-            st.session_state.current_activity = selected
-            # st.write("调试：检索到活动：" + selected.get('name', '未知'))  # 加调试
+            # 多个候选，展示给用户选择（取前3个）
+            st.info("🔍 找到多个相似的活动，请选择一个：")
+            top_candidates = candidates[:3]
+            
+            # 显示候选活动信息
+            col1, col2 = st.columns([3, 1])
+            with col1:
+                st.write("**候选活动列表：**")
+            with col2:
+                st.write("")
+            
+            for i, cand in enumerate(top_candidates, 1):
+                activity = cand["activity"]
+                score = cand["score"]
+                matched = cand.get("matched", [])
+                st.write(f"{i}. **{activity.get('name')}** (匹配度: {score}) - 匹配项: {', '.join(matched)}")
+            
+            # 用户选择
+            selected_idx = st.radio(
+                "选择活动：", 
+                [f"{i}. {c['activity'].get('name')} (匹配度: {c['score']})" 
+                 for i, c in enumerate(top_candidates, 1)],
+                key=f"activity_select_{question}"
+            )
+            
+            if selected_idx:
+                idx = int(selected_idx[0]) - 1
+                current_activity = top_candidates[idx]["activity"]
+                st.session_state.current_activity = current_activity
+                st.success(f"✅ 已选择活动：{current_activity.get('name')}")
+                # 继续处理这个活动
 
-    # ② 已经有活动 → 抽取 + 回答（改动点：添加 AI 判断和调用）
+    # ② 已经有活动 → 抽取 + 回答（添加 AI 判断和调用）
     if current_activity:
-        # st.write("调试：当前活动存在，正在提取 blocks...")
         extracted = extract_blocks(current_activity, question)
-        st.write("调试：extracted 是否有内容？", bool(extracted))  # 加调试
 
         if extracted:
-            st.write("调试：USE_AI 值（进入分支前）：", USE_AI)  # 加调试
-
             if USE_AI:
-                st.info("已进入 AI 润色分支，正在调用 DashScope...")  # 加调试 + 用户提示
+                st.info("已进入 AI 润色分支，正在调用 DashScope...")
                 try:
-                    text = ai_generate_answer(extracted, question)  # 调用 AI 函数
-                    # st.success("调试：AI 调用成功，返回内容长度：" + str(len(text)))  # 加调试
+                    text = ai_generate_answer(extracted, question)
                 except Exception as e:
-                    error_msg = show_error(f"AI 调用异常：{str(e)}", e)  # 用兼容函数显示错误
+                    error_msg = show_error(f"AI 调用异常：{str(e)}", e)
                     text = render_response(extracted)  # fallback 原文
-                    st.warning("调试：AI 调用失败，已 fallback 到原文")
+                    st.warning("AI 调用失败，已 fallback 到原文")
             else:
-                st.warning("USE_AI 为 False，跳过 AI，直接用 render_response")  # 加调试
                 text = render_response(extracted)
         else:
-            st.warning("extracted 为空，没有可用的块信息")  # 加调试
+            st.warning("暂无相关信息")
             text = "暂无相关信息"
 
         answer = text  # 最终输出
 
-    # ③ 记录对话（保持原样）
-    st.session_state.chat_history.append(
-        {"question": question, "answer": answer}
-    )
+        # ③ 记录对话
+        st.session_state.chat_history.append(
+            {"question": question, "answer": answer}
+        )
 
 # 对话展示
 for item in reversed(st.session_state.chat_history):
@@ -125,8 +151,3 @@ for item in reversed(st.session_state.chat_history):
 # 当前活动提示
 if st.session_state.current_activity:
     st.info(f"📌 当前活动：{st.session_state.current_activity.get('name')}")
-
-
-
-
-

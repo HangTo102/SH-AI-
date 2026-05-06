@@ -1,0 +1,83 @@
+{
+  "id": "indie_music_festival_2024",
+  "name": "2024独立音乐节",
+  "aliases": [
+    "独立音乐节",
+    "indie音乐节",
+    "音乐节"
+  ],
+  "date": "2024年10月1日-10月3日",
+  "time": "每天13:00-23:00",
+  "location": "上海世纪公园",
+  "address": "上海市浦东新区锦绣路1001号",
+  "description": "专注独立音乐的先锋音乐盛会，展现多元音乐文化与独立精神。",
+  "lineup": [
+    {
+      "artist": "万能青年旅店",
+      "time": "10月1日 20:00",
+      "stage": "主舞台"
+    },
+    {
+      "artist": "刺猬乐队",
+      "time": "10月2日 19:30",
+      "stage": "主舞台"
+    },
+    {
+      "artist": "五条人",
+      "time": "10月3日 21:30",
+      "stage": "主舞台"
+    },
+    {
+      "artist": "房东的猫",
+      "time": "10月1日 16:30",
+      "stage": "副舞台"
+    },
+    {
+      "artist": "海龟先生",
+      "time": "10月2日 17:00",
+      "stage": "副舞台"
+    },
+    {
+      "artist": "告五人",
+      "time": "10月3日 18:00",
+      "stage": "副舞台"
+    }
+  ],
+  "ticket_info": {
+    "single_day": "早鸟票 299元，普通票 399元，VIP票 799元",
+    "three_day_pass": "通票 899元，VIP通票 1999元",
+    "purchase_url": "https://ticket.example.com/indie-music-fest",
+    "student_discount": [
+      "学生票 75折优惠",
+      "在校大学生凭学生证享受额外优惠"
+    ]
+  },
+  "facilities": [
+    "特色餐饮区",
+    "文创市集",
+    "露营区",
+    "休息区",
+    "急救站",
+    "WiFi热点",
+    "手机充电站",
+    "行李寄存"
+  ],
+  "rules": [
+    "禁止携带易燃易爆物品",
+    "16岁以下需监护人陪同",
+    "禁止携带无人机",
+    "场内禁止吸烟",
+    "宠物禁止入内"
+  ],
+  "contact": {
+    "phone": "021-5566-7788",
+    "email": "info@indiemusicfest.com",
+    "wechat": "IndieMusic2024"
+  },
+  "special_features": [
+    "独立音乐人交流会",
+    "乐器工作坊",
+    "黑胶唱片展",
+    "音乐纪录片放映"
+  ]
+}
